@@ -8,6 +8,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace CodeCracker.CSharp.Performance
 {
@@ -38,7 +39,8 @@ namespace CodeCracker.CSharp.Performance
             var nextMethodMemberAccess = nextMethodInvoke.ChildNodes().OfType<MemberAccessExpressionSyntax>().FirstOrDefault();
             var newNextMethodInvoke = SyntaxFactory.InvocationExpression(
                 SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, whereMemberAccess.Expression, nextMethodMemberAccess.Name),
-                whereInvoke.ArgumentList);
+                whereInvoke.ArgumentList)
+                .WithAdditionalAnnotations(Formatter.Annotation);
             var newRoot = root.ReplaceNode(nextMethodInvoke, newNextMethodInvoke);
             var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
